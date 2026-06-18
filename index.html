@@ -4,9 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Lilian Welschinger</title>
-<meta name="description" content="Lilian Welschinger — machine learning researcher working on representation learning, physical dynamics, and world models." />
+<meta name="description" content="Lilian Welschinger — machine learning researcher working on representation learning, physical dynamics, and world models. Incoming PhD at EPFL." />
 
-<!-- Fonts load from Google's CDN in the visitor's browser -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -26,13 +25,13 @@
     --sans: "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
 
-    --maxw: 960px;
-    --pad: clamp(1.25rem, 5vw, 3.5rem);
+    --maxw: 940px;
+    --pad: clamp(1.25rem, 5vw, 3rem);
+    --nav-h: 60px;
   }
 
   * { box-sizing: border-box; }
-
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; scroll-padding-top: var(--nav-h); }
 
   body {
     margin: 0;
@@ -44,18 +43,22 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
-
   a { color: inherit; }
-
   ::selection { background: var(--accent); color: #fff; }
 
-  .wrap {
-    max-width: var(--maxw);
-    margin: 0 auto;
-    padding: 0 var(--pad);
+  /* interactive background sits behind everything */
+  #field {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
   }
+  .page { position: relative; z-index: 1; }
 
-  /* ---------- eyebrow label ---------- */
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 var(--pad); }
+
   .eyebrow {
     font-family: var(--mono);
     font-size: 0.72rem;
@@ -65,73 +68,112 @@
     margin: 0 0 1.4rem 0;
   }
 
-  /* ---------- HERO ---------- */
-  .hero {
-    position: relative;
-    overflow: hidden;
+  /* ---------- NAV ---------- */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    height: var(--nav-h);
+    display: flex;
+    align-items: center;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background: color-mix(in srgb, var(--bg) 78%, transparent);
     border-bottom: 1px solid var(--line);
   }
-  #field {
-    position: absolute;
-    inset: 0;
+  .nav-inner {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 var(--pad);
     width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
   }
-  .hero-inner {
-    position: relative;
-    z-index: 1;
+  .nav-name {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+  .nav-links { display: flex; gap: clamp(0.9rem, 3vw, 1.8rem); }
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--muted);
+    padding: 4px 0;
+    transition: color 0.2s ease;
+  }
+  .nav-links a:hover, .nav-links a:focus-visible { color: var(--accent); }
+  @media (max-width: 540px) {
+    .nav-name { display: none; }
+    .nav-inner { justify-content: center; }
+  }
+
+  /* ---------- HERO ---------- */
+  .hero { padding-top: clamp(3rem, 9vh, 6rem); padding-bottom: clamp(2.5rem, 7vh, 4.5rem); }
+  .hero-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 2.5rem;
-    padding-top: clamp(4.5rem, 13vh, 8rem);
-    padding-bottom: clamp(3.5rem, 9vh, 6rem);
+    gap: 2rem;
+    align-items: center;
   }
-  @media (min-width: 760px) {
-    .hero-inner { grid-template-columns: 1fr auto; align-items: center; }
+  @media (min-width: 720px) {
+    .hero-grid { grid-template-columns: auto 1fr; gap: 2.8rem; }
+  }
+  .portrait {
+    width: clamp(128px, 24vw, 180px);
+    aspect-ratio: 1 / 1;
+    border-radius: 3px;
+    object-fit: cover;
+    filter: grayscale(100%) contrast(1.02);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    transition: filter 0.4s ease;
+  }
+  .portrait:hover { filter: grayscale(0%); }
+  .portrait-fallback {
+    width: clamp(128px, 24vw, 180px);
+    aspect-ratio: 1 / 1;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif);
+    font-size: 2.8rem;
+    color: var(--faint);
+    background: var(--surface);
   }
 
   .name {
     font-family: var(--serif);
     font-weight: 400;
-    font-size: clamp(2rem, 5.5vw, 3.4rem);
-    line-height: 1.1;
+    font-size: clamp(2.1rem, 5.5vw, 3.3rem);
+    line-height: 1.08;
     letter-spacing: -0.01em;
     margin: 0;
   }
-  .name .given { display: block; color: var(--ink); }
-  .name .family { display: block; color: var(--ink); }
-
-  .tagline {
-    margin: 1.6rem 0 0 0;
-    max-width: 30ch;
-    font-size: clamp(1.05rem, 2.2vw, 1.22rem);
-    line-height: 1.5;
+  .role {
+    margin: 0.7rem 0 0 0;
+    font-size: 1.02rem;
     color: var(--muted);
   }
-  .tagline em { font-family: var(--serif); font-style: italic; color: var(--ink); }
-
-  .meta {
-    margin-top: 1.8rem;
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.04em;
-    color: var(--faint);
-    line-height: 1.9;
-  }
-  .meta strong { color: var(--ink); font-weight: 500; }
-
+  .role strong { color: var(--ink); font-weight: 600; }
   .links {
-    margin-top: 2rem;
+    margin-top: 1.5rem;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem 1.4rem;
+    gap: 0.5rem 1.3rem;
   }
   .links a {
     font-family: var(--mono);
     font-size: 0.8rem;
-    letter-spacing: 0.02em;
     text-decoration: none;
     color: var(--ink);
     padding-bottom: 2px;
@@ -140,95 +182,54 @@
   }
   .links a:hover, .links a:focus-visible { color: var(--accent); border-color: var(--accent); }
 
-  /* portrait */
-  .portrait {
-    width: clamp(120px, 22vw, 168px);
-    aspect-ratio: 1 / 1;
-    border-radius: 2px;
-    object-fit: cover;
-    filter: grayscale(100%) contrast(1.02);
-    border: 1px solid var(--line);
-    transition: filter 0.4s ease;
-  }
-  .portrait:hover { filter: grayscale(0%); }
-  .portrait-fallback {
-    width: clamp(120px, 22vw, 168px);
-    aspect-ratio: 1 / 1;
-    border: 1px solid var(--line);
-    border-radius: 2px;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--serif);
-    font-size: 2.6rem;
-    color: var(--faint);
-    background: var(--surface);
-  }
-
-  /* ---------- generic section ---------- */
-  section { padding: clamp(3.5rem, 8vh, 6rem) 0; border-bottom: 1px solid var(--line); }
-  section:last-of-type { border-bottom: none; }
+  /* ---------- sections ---------- */
+  section { padding: clamp(2.8rem, 7vh, 5rem) 0; border-top: 1px solid var(--line); }
 
   .lede {
     font-family: var(--serif);
     font-weight: 300;
-    font-size: clamp(1.35rem, 3.4vw, 1.85rem);
+    font-size: clamp(1.3rem, 3.2vw, 1.8rem);
     line-height: 1.45;
     letter-spacing: -0.01em;
-    max-width: 32ch;
+    max-width: 34ch;
     margin: 0;
   }
-  .lede a { color: var(--accent); text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--accent) 30%, transparent); }
-  .lede a:hover { border-color: var(--accent); }
+  .lede em { font-style: italic; }
 
-  /* ---------- focus tags ---------- */
-  .focus-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
-    gap: 1px;
-    background: var(--line);
-    border: 1px solid var(--line);
-    margin-top: 0.5rem;
-  }
-  .focus-item {
-    background: var(--bg);
-    padding: 1.4rem 1.5rem;
-  }
-  .focus-item h3 {
-    margin: 0 0 0.35rem 0;
-    font-family: var(--serif);
-    font-weight: 500;
-    font-size: 1.15rem;
-  }
-  .focus-item p { margin: 0; font-size: 0.92rem; color: var(--muted); line-height: 1.55; }
-
-  /* ---------- entries (pubs / cv) ---------- */
-  .entry {
+  /* publications */
+  .pub {
     display: grid;
     grid-template-columns: 1fr;
     gap: 0.3rem 2rem;
-    padding: 1.6rem 0;
+    padding: 1.7rem 0;
     border-top: 1px solid var(--line);
   }
-  .entry:first-of-type { border-top: none; }
-  @media (min-width: 680px) {
-    .entry { grid-template-columns: 8.5rem 1fr; }
-  }
-  .entry .when {
+  .pub:first-of-type { border-top: none; }
+  @media (min-width: 680px) { .pub { grid-template-columns: 8.5rem 1fr; } }
+  .pub .when {
     font-family: var(--mono);
     font-size: 0.76rem;
-    letter-spacing: 0.03em;
     color: var(--faint);
-    padding-top: 0.25rem;
+    padding-top: 0.2rem;
   }
-  .entry .title { font-weight: 600; font-size: 1.02rem; margin: 0; }
-  .entry .title em { font-weight: 400; }
-  .entry .sub { color: var(--muted); font-size: 0.95rem; margin: 0.15rem 0 0 0; }
-  .entry .note {
-    display: inline-block;
-    margin-top: 0.5rem;
+  .pub .ptitle { font-weight: 600; font-size: 1.04rem; margin: 0; line-height: 1.35; }
+  .pub .authors { color: var(--muted); font-size: 0.93rem; margin: 0.25rem 0 0 0; }
+  .pub .authors .me { color: var(--ink); font-weight: 600; }
+  .pub .venue { font-family: var(--serif); font-style: italic; color: var(--muted); font-size: 0.95rem; margin: 0.2rem 0 0 0; }
+  .pub .plinks { margin-top: 0.55rem; display: flex; gap: 0.9rem; flex-wrap: wrap; }
+  .pub .plinks a {
     font-family: var(--mono);
-    font-size: 0.68rem;
+    font-size: 0.72rem;
+    text-decoration: none;
+    color: var(--accent);
+    border-bottom: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  }
+  .pub .plinks a:hover { border-color: var(--accent); }
+  .pub .note {
+    display: inline-block;
+    margin-top: 0.55rem;
+    font-family: var(--mono);
+    font-size: 0.66rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--accent);
@@ -236,225 +237,170 @@
     border-radius: 100px;
     padding: 0.15rem 0.6rem;
   }
-  .entry a.title-link { text-decoration: none; border-bottom: 1px solid var(--line); }
-  .entry a.title-link:hover { border-color: var(--accent); color: var(--accent); }
 
-  .authors { color: var(--muted); font-size: 0.92rem; }
-  .authors .me { color: var(--ink); font-weight: 600; }
+  /* education */
+  .edu {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.2rem 2rem;
+    padding: 1.4rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .edu:first-of-type { border-top: none; }
+  @media (min-width: 680px) { .edu { grid-template-columns: 8.5rem 1fr; } }
+  .edu .when { font-family: var(--mono); font-size: 0.76rem; color: var(--faint); padding-top: 0.2rem; }
+  .edu .etitle { font-weight: 600; font-size: 1rem; margin: 0; }
+  .edu .esub { color: var(--muted); font-size: 0.93rem; margin: 0.15rem 0 0 0; }
 
-  /* ---------- footer ---------- */
-  footer {
-    padding: clamp(3rem, 7vh, 5rem) 0 4rem 0;
-  }
-  .footer-row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 1.5rem;
-  }
-  .footer-row .mail {
+  /* contact */
+  .contact-mail {
     font-family: var(--serif);
-    font-size: clamp(1.4rem, 4vw, 2.2rem);
+    font-size: clamp(1.5rem, 4.5vw, 2.4rem);
     text-decoration: none;
     letter-spacing: -0.01em;
     border-bottom: 1px solid var(--line);
-    transition: border-color 0.2s ease;
+    transition: border-color 0.2s ease, color 0.2s ease;
   }
-  .footer-row .mail:hover { border-color: var(--accent); color: var(--accent); }
+  .contact-mail:hover { color: var(--accent); border-color: var(--accent); }
   .colophon {
     margin-top: 2.5rem;
+    padding-bottom: 3rem;
     font-family: var(--mono);
     font-size: 0.7rem;
-    letter-spacing: 0.04em;
     color: var(--faint);
   }
 
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 1px; }
-
-  @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
-  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 </style>
 </head>
 <body>
 
-  <header class="hero">
-    <canvas id="field" aria-hidden="true"></canvas>
-    <div class="wrap hero-inner">
-      <div>
-        <h1 class="name">
-          <span class="given">Lilian</span>
-          <span class="family">Welschinger</span>
-        </h1>
-        <p class="tagline">
-          Machine learning researcher working on representation learning,
-          <em>physical dynamics</em>, and world models.
-        </p>
-        <div class="meta">
-          <span><strong>Incoming PhD</strong> · EPFL, CVLab — Sept 2026</span><br />
-          <span>Currently research at <strong>INRIA Willow</strong> (ENS)</span><br />
-          <span>Paris · Lausanne</span>
+  <canvas id="field" aria-hidden="true"></canvas>
+
+  <div class="page">
+    <nav>
+      <div class="nav-inner">
+        <a class="nav-name" href="#top">Lilian Welschinger</a>
+        <div class="nav-links">
+          <a href="#about">About</a>
+          <a href="#publications">Publications</a>
+          <a href="#education">Education</a>
+          <a href="#contact">Contact</a>
         </div>
-        <nav class="links" aria-label="Profiles">
-          <a href="mailto:lilian.welschinger@epfl.ch">Email</a>
-          <a href="https://github.com/welschinger">GitHub</a>
-          <!-- TODO Lilian: décommente et complète tes URLs quand tu les as
-          <a href="https://scholar.google.com/citations?user=XXXX">Scholar</a>
-          <a href="https://www.linkedin.com/in/XXXX">LinkedIn</a>
-          -->
-          <a href="cv.pdf">CV (PDF)</a>
-        </nav>
       </div>
+    </nav>
 
-      <div>
-        <!-- Pose ta photo dans le même dossier sous le nom photo.jpg -->
-        <img class="portrait" id="portrait" src="photo.jpg" alt="Lilian Welschinger"
-             onerror="this.style.display='none';document.getElementById('portrait-fb').style.display='flex';" />
-        <div class="portrait-fallback" id="portrait-fb" aria-hidden="true">LW</div>
+    <header class="hero wrap" id="top">
+      <div class="hero-grid">
+        <div>
+          <!-- Pose ta photo dans le repo sous le nom photo.jpg -->
+          <img class="portrait" id="portrait" src="photo.jpg" alt="Lilian Welschinger"
+               onerror="this.style.display='none';document.getElementById('portrait-fb').style.display='flex';" />
+          <div class="portrait-fallback" id="portrait-fb" aria-hidden="true">LW</div>
+        </div>
+        <div>
+          <h1 class="name">Lilian Welschinger</h1>
+          <p class="role">
+            Incoming <strong>PhD student</strong> at EPFL (CVLab) · currently
+            research at <strong>INRIA Willow</strong>, ENS — Paris &amp; Lausanne.
+          </p>
+          <nav class="links" aria-label="Profiles">
+            <!-- TODO Lilian: remplace XXXX par ton vrai ID Google Scholar -->
+            <a href="https://scholar.google.com/citations?user=XXXX">Google Scholar</a>
+            <a href="https://github.com/welschinger">GitHub</a>
+            <a href="cv.pdf">CV (PDF)</a>
+            <a href="mailto:lilian.welschinger@epfl.ch">Email</a>
+          </nav>
+        </div>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <main>
+    <main class="wrap">
 
-    <section id="about">
-      <div class="wrap">
+      <section id="about">
         <p class="eyebrow">About</p>
         <p class="lede">
-          I am broadly interested in how machines can learn to understand
-          and predict the physical world. My background is in mathematics;
-          my current work sits at the intersection of generative models,
+          I am broadly interested in how machines can learn to understand and
+          predict the physical world. My background is in mathematics; my
+          current work sits at the intersection of generative models,
           <em>physical dynamics</em>, and representation learning.
         </p>
-      </div>
-    </section>
+      </section>
 
-    <section id="focus">
-      <div class="wrap">
-        <p class="eyebrow">Research focus</p>
-        <div class="focus-grid">
-          <div class="focus-item">
-            <h3>World models</h3>
-            <p>How can we build models that predict, not just interpolate? Object-centric and predictive representations of scene evolution.</p>
-          </div>
-          <div class="focus-item">
-            <h3>Physical dynamics</h3>
-            <p>Grounding generative video in motion and physical plausibility — beyond surface-level appearance.</p>
-          </div>
-          <div class="focus-item">
-            <h3>Representation learning</h3>
-            <p>Self-supervised and alignment-based objectives for video and visual foundation models.</p>
-          </div>
-          <div class="focus-item">
-            <h3>Geometric deep learning</h3>
-            <p>Learning on shapes and surfaces — PDE solvers, neural representations, and structure-aware models.</p>
-          </div>
-        </div>
-      </div>
-    </section>
+      <section id="publications">
+        <p class="eyebrow">Publications</p>
 
-    <section id="publications">
-      <div class="wrap">
-        <p class="eyebrow">Selected work</p>
-
-        <div class="entry">
+        <div class="pub">
           <div class="when">CVPR 2026</div>
           <div>
-            <p class="title">Learning to Solve PDEs on Neural Shape Representations</p>
-            <p class="authors">
-              <span class="me">Lilian Welschinger</span>, Yilin Liu, Zican Wang, Niloy J. Mitra
-            </p>
-            <p class="sub">IEEE/CVF Conference on Computer Vision and Pattern Recognition.</p>
-            <span class="note">Published</span>
+            <p class="ptitle">Learning to Solve PDEs on Neural Shape Representations</p>
+            <p class="authors"><span class="me">Lilian Welschinger</span>, Yilin Liu, Zican Wang, Niloy J. Mitra</p>
+            <p class="venue">IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 2026.</p>
+            <div class="plinks">
+              <!-- TODO Lilian: ajoute les vraies URLs quand dispo -->
+              <a href="#">paper</a>
+              <!-- <a href="#">code</a> <a href="#">project page</a> -->
+            </div>
           </div>
         </div>
 
-        <div class="entry">
-          <div class="when">2026 — ongoing</div>
+        <div class="pub">
+          <div class="when">Ongoing</div>
           <div>
-            <p class="title">Object-level supervision for physically grounded video generation</p>
-            <p class="sub">
-              Fine-tuning video diffusion models with object-centric grounding,
-              temporal consistency, and an explicit dynamics prior. INRIA Willow.
-            </p>
+            <p class="ptitle">Object-level supervision for physically grounded video generation</p>
+            <p class="venue">Research project, INRIA Willow.</p>
             <span class="note">In progress</span>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section id="background">
-      <div class="wrap">
-        <p class="eyebrow">Research experience</p>
-
-        <div class="entry">
-          <div class="when">2026</div>
-          <div>
-            <p class="title">INRIA Willow · ENS <em>— Research Assistant</em></p>
-            <p class="sub">Generative video models and world models for physical dynamics, with Prof. Shizhe Chen.</p>
-          </div>
-        </div>
-        <div class="entry">
-          <div class="when">2025</div>
-          <div>
-            <p class="title">University College London <em>— Research Assistant</em></p>
-            <p class="sub">Geometric deep learning and learning-based PDE solvers on neural shape representations, with Prof. Niloy J. Mitra.</p>
-          </div>
-        </div>
-        <div class="entry">
-          <div class="when">2024</div>
-          <div>
-            <p class="title">Institut Camille Jordan · CNRS <em>— Research Assistant</em></p>
-            <p class="sub">Non-Markovian random walks and asymptotic probabilistic behaviour, with Prof. Christophe Sabot.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="education">
-      <div class="wrap">
+      <section id="education">
         <p class="eyebrow">Education</p>
 
-        <div class="entry">
+        <div class="edu">
           <div class="when">2026 →</div>
           <div>
-            <p class="title">EPFL — PhD, Computer &amp; Communication Sciences (EDIC)</p>
-            <p class="sub">EDIC Fellowship. Expected supervision by Prof. Pascal Fua, CVLab.</p>
+            <p class="etitle">PhD, Computer &amp; Communication Sciences (EDIC) — EPFL</p>
+            <p class="esub">EDIC Fellowship. Expected supervision by Prof. Pascal Fua, CVLab.</p>
           </div>
         </div>
-        <div class="entry">
+        <div class="edu">
           <div class="when">2024–25</div>
           <div>
-            <p class="title">ENS Paris-Saclay — MVA (Mathematics, Vision, Learning)</p>
-            <p class="sub">Research master's, GPA 4.0 / 4.0.</p>
+            <p class="etitle">MVA (Mathematics, Vision, Learning) — ENS Paris-Saclay</p>
+            <p class="esub">Research master's. GPA 4.0 / 4.0.</p>
           </div>
         </div>
-        <div class="entry">
+        <div class="edu">
           <div class="when">2022–25</div>
           <div>
-            <p class="title">ENSTA Paris (IP Paris) — MSc, Data Science, Optimisation &amp; Probability</p>
-            <p class="sub">GPA 4.0 / 4.0, top 5% of cohort.</p>
+            <p class="etitle">MSc, Data Science, Optimisation &amp; Probability — ENSTA Paris (IP Paris)</p>
+            <p class="esub">GPA 4.0 / 4.0, top 5% of cohort.</p>
           </div>
         </div>
-      </div>
-    </section>
+        <div class="edu">
+          <div class="when">2020–22</div>
+          <div>
+            <p class="etitle">CPGE MP* — Lycée Claude Fauriel, Saint-Étienne</p>
+            <p class="esub">Preparatory classes in mathematics and physics.</p>
+          </div>
+        </div>
+      </section>
 
-  </main>
+      <section id="contact">
+        <p class="eyebrow">Contact</p>
+        <a class="contact-mail" href="mailto:lilian.welschinger@epfl.ch">lilian.welschinger@epfl.ch</a>
+        <p class="colophon">Paris &amp; Lausanne — 2026.</p>
+      </section>
 
-  <footer>
-    <div class="wrap">
-      <p class="eyebrow">Get in touch</p>
-      <div class="footer-row">
-        <a class="mail" href="mailto:lilian.welschinger@epfl.ch">lilian.welschinger@epfl.ch</a>
-      </div>
-      <p class="colophon">Paris &amp; Lausanne — last updated 2026.</p>
-    </div>
-  </footer>
+    </main>
+  </div>
 
   <script>
-  // Signature element: a single object in free fall tracing a slow parabola.
-  // A quiet nod to physical-dynamics research. Disabled under reduced-motion.
+  // Interactive background: an elastic field of points.
+  // The cursor pushes points away like a force; springs pull them back to rest.
+  // A nod to forces, dynamics, and equilibrium. Static under reduced-motion.
   (function () {
     var prefersReduced = window.matchMedia &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -462,76 +408,70 @@
     if (!canvas) return;
     var ctx = canvas.getContext("2d");
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    var W = 0, H = 0;
+    var W = 0, H = 0, pts = [];
+    var SPACING = 46;          // distance between points at rest
+    var RADIUS = 130;          // cursor influence radius
+    var FORCE = 2200;          // push strength
+    var mouse = { x: -9999, y: -9999 };
 
-    function resize() {
+    function build() {
       var r = canvas.getBoundingClientRect();
       W = r.width; H = r.height;
       canvas.width = W * dpr; canvas.height = H * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    }
-    resize();
-    window.addEventListener("resize", resize);
-
-    var ACCENT = "75, 79, 176"; // --accent-soft rgb
-
-    // One projectile: launches from lower-left, arcs across, resets.
-    function makeShot() {
-      var v0 = (W * 0.0016) + Math.random() * (W * 0.0006); // horizontal speed
-      var g = 0.018 + Math.random() * 0.006;                // gravity
-      var vy = -(H * 0.012) - Math.random() * (H * 0.004);  // initial up speed
-      return {
-        x: -20,
-        y: H * (0.55 + Math.random() * 0.3),
-        vx: v0,
-        vy: vy,
-        g: g,
-        trail: []
-      };
-    }
-    var shot = makeShot();
-
-    function step() {
-      ctx.clearRect(0, 0, W, H);
-
-      if (!prefersReduced) {
-        shot.x += shot.vx;
-        shot.vy += shot.g;
-        shot.y += shot.vy;
-        shot.trail.push({ x: shot.x, y: shot.y });
-        if (shot.trail.length > 90) shot.trail.shift();
-
-        if (shot.x > W + 40 || shot.y > H + 60) shot = makeShot();
-      } else if (shot.trail.length === 0) {
-        // draw a static faint arc once
-        var s = makeShot(); s.x = -20;
-        for (var i = 0; i < 90; i++) {
-          s.x += s.vx; s.vy += s.g; s.y += s.vy;
-          shot.trail.push({ x: s.x, y: s.y });
+      pts = [];
+      var cols = Math.ceil(W / SPACING) + 1;
+      var rows = Math.ceil(H / SPACING) + 1;
+      for (var i = 0; i < cols; i++) {
+        for (var j = 0; j < rows; j++) {
+          var hx = i * SPACING, hy = j * SPACING;
+          pts.push({ hx: hx, hy: hy, x: hx, y: hy, vx: 0, vy: 0 });
         }
       }
-
-      // trail
-      for (var j = 0; j < shot.trail.length; j++) {
-        var t = j / shot.trail.length;
-        var p = shot.trail[j];
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 1.1 + t * 1.6, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(" + ACCENT + "," + (t * 0.16).toFixed(3) + ")";
-        ctx.fill();
-      }
-      // leading point
-      if (shot.trail.length) {
-        var head = shot.trail[shot.trail.length - 1];
-        ctx.beginPath();
-        ctx.arc(head.x, head.y, 3.2, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(" + ACCENT + ", 0.5)";
-        ctx.fill();
-      }
-
-      if (!prefersReduced) requestAnimationFrame(step);
     }
-    step();
+    build();
+    window.addEventListener("resize", build);
+
+    window.addEventListener("mousemove", function (e) {
+      mouse.x = e.clientX; mouse.y = e.clientY;
+    });
+    window.addEventListener("mouseleave", function () { mouse.x = -9999; mouse.y = -9999; });
+    window.addEventListener("touchmove", function (e) {
+      if (e.touches[0]) { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; }
+    }, { passive: true });
+
+    function frame() {
+      ctx.clearRect(0, 0, W, H);
+      for (var k = 0; k < pts.length; k++) {
+        var p = pts[k];
+        if (!prefersReduced) {
+          // cursor repulsion
+          var dx = p.x - mouse.x, dy = p.y - mouse.y;
+          var d2 = dx * dx + dy * dy;
+          if (d2 < RADIUS * RADIUS && d2 > 0.01) {
+            var d = Math.sqrt(d2);
+            var f = (FORCE / d2);
+            p.vx += (dx / d) * f;
+            p.vy += (dy / d) * f;
+          }
+          // spring back to home + damping
+          p.vx += (p.hx - p.x) * 0.02;
+          p.vy += (p.hy - p.y) * 0.02;
+          p.vx *= 0.86; p.vy *= 0.86;
+          p.x += p.vx; p.y += p.vy;
+        }
+        // displacement controls size/alpha so motion reads as "energy"
+        var disp = Math.abs(p.x - p.hx) + Math.abs(p.y - p.hy);
+        var a = Math.min(0.5, 0.10 + disp * 0.012);
+        var rad = 1 + Math.min(1.6, disp * 0.03);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, rad, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(75, 79, 176," + a.toFixed(3) + ")";
+        ctx.fill();
+      }
+      requestAnimationFrame(frame);
+    }
+    frame();
   })();
   </script>
 
