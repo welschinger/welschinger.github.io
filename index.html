@@ -130,12 +130,9 @@
     aspect-ratio: 1 / 1;
     border-radius: 3px;
     object-fit: cover;
-    filter: grayscale(100%) contrast(1.02);
     border: 1px solid var(--line);
     background: var(--surface);
-    transition: filter 0.4s ease;
   }
-  .portrait:hover { filter: grayscale(0%); }
   .portrait-fallback {
     width: clamp(128px, 24vw, 180px);
     aspect-ratio: 1 / 1;
